@@ -1,23 +1,3 @@
-/*
- * This file is part of LSPosed.
- *
- * LSPosed is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * LSPosed is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with LSPosed.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Copyright (C) 2020 EdXposed Contributors
- * Copyright (C) 2021 LSPosed Contributors
- */
-
 package org.lsposed.lspd.hooker;
 
 import static org.lsposed.lspd.util.Utils.logD;
@@ -32,14 +12,11 @@ import de.robv.android.xposed.XposedInit;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import io.github.libxposed.api.XposedInterface;
 import io.github.libxposed.api.XposedModuleInterface;
-import io.github.libxposed.api.annotations.BeforeInvocation;
-import io.github.libxposed.api.annotations.XposedHooker;
 
-@XposedHooker
 public class StartBootstrapServicesHooker implements XposedInterface.Hooker {
 
-    @BeforeInvocation
-    public static void beforeHookedMethod() {
+    @Override
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         logD("SystemServer#startBootstrapServices() starts");
 
         try {
@@ -53,7 +30,7 @@ public class StartBootstrapServicesHooker implements XposedInterface.Hooker {
             lpparam.isFirstApplication = true;
             XC_LoadPackage.callAll(lpparam);
 
-            LSPosedContext.callOnSystemServerLoaded(new XposedModuleInterface.SystemServerLoadedParam() {
+            LSPosedContext.callOnSystemServerStarting(new XposedModuleInterface.SystemServerStartingParam() {
                 @Override
                 @NonNull
                 public ClassLoader getClassLoader() {
@@ -63,5 +40,6 @@ public class StartBootstrapServicesHooker implements XposedInterface.Hooker {
         } catch (Throwable t) {
             Hookers.logE("error when hooking startBootstrapServices", t);
         }
+        return chain.proceed();
     }
 }

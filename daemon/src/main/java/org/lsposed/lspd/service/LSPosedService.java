@@ -282,26 +282,26 @@ public class LSPosedService extends ILSPosedService.Stub {
         try {
             var applicationInfo = PackageService.getApplicationInfo(scopePackageName, 0, userId);
             if (applicationInfo == null) {
-                iCallback.onScopeRequestFailed(scopePackageName, "Package not found");
+                iCallback.onScopeRequestFailed("Package not found: " + scopePackageName);
                 return;
             }
 
             switch (action) {
                 case "approve" -> {
                     ConfigManager.getInstance().setModuleScope(packageName, scopePackageName, userId);
-                    iCallback.onScopeRequestApproved(scopePackageName);
+                    iCallback.onScopeRequestApproved(List.of(scopePackageName));
                 }
-                case "deny" -> iCallback.onScopeRequestDenied(scopePackageName);
-                case "delete" -> iCallback.onScopeRequestTimeout(scopePackageName);
+                case "deny" -> iCallback.onScopeRequestFailed("Scope request denied by user: " + scopePackageName);
+                case "delete" -> iCallback.onScopeRequestFailed("Scope request dismissed: " + scopePackageName);
                 case "block" -> {
                     ConfigManager.getInstance().blockScopeRequest(packageName);
-                    iCallback.onScopeRequestDenied(scopePackageName);
+                    iCallback.onScopeRequestFailed("Scope requests blocked for " + scopePackageName);
                 }
             }
             Log.i(TAG, action + " scope " + scopePackageName + " for " + packageName + " in user " + userId);
         } catch (RemoteException e) {
             try {
-                iCallback.onScopeRequestFailed(scopePackageName, e.getMessage());
+                iCallback.onScopeRequestFailed(e.getMessage());
             } catch (RemoteException ignored) {
                 // callback died
             }

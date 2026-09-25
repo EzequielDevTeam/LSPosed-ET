@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.github.libxposed.service.IXposedService;
-
 public class LSPInjectedModuleService extends ILSPInjectedModuleService.Stub {
 
     private static final String TAG = "LSPosedInjectedModuleService";
@@ -31,7 +29,9 @@ public class LSPInjectedModuleService extends ILSPInjectedModuleService.Stub {
 
     @Override
     public int getFrameworkPrivilege() {
-        return IXposedService.FRAMEWORK_PRIVILEGE_ROOT;
+        // Legacy privilege level preserved for the in-process injected service.
+        // libxposed API 102 replaced privileges with framework properties.
+        return 1;
     }
 
     @Override

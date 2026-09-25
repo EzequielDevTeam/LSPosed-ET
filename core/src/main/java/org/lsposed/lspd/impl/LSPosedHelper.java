@@ -11,36 +11,42 @@ import io.github.libxposed.api.errors.HookFailedError;
 public class LSPosedHelper {
 
     @SuppressWarnings("UnusedReturnValue")
-    public static <T> XposedInterface.MethodUnhooker<Method>
-    hookMethod(Class<? extends XposedInterface.Hooker> hooker, Class<T> clazz, String methodName, Class<?>... parameterTypes) {
+    public static XposedInterface.HookHandle
+    hookMethod(XposedInterface.Hooker hooker, Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         try {
             var method = clazz.getDeclaredMethod(methodName, parameterTypes);
-            return LSPosedBridge.doHook(method, XposedInterface.PRIORITY_DEFAULT, hooker);
+            return LSPosedBridge.hook(null, method).intercept(hooker);
         } catch (NoSuchMethodException e) {
             throw new HookFailedError(e);
         }
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static <T> Set<XposedInterface.MethodUnhooker<Method>>
-    hookAllMethods(Class<? extends XposedInterface.Hooker> hooker, Class<T> clazz, String methodName) {
-        var unhooks = new HashSet<XposedInterface.MethodUnhooker<Method>>();
+    public static Set<XposedInterface.HookHandle>
+    hookAllMethods(XposedInterface.Hooker hooker, Class<?> clazz, String methodName) {
+        var handles = new HashSet<XposedInterface.HookHandle>();
         for (var method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
-                unhooks.add(LSPosedBridge.doHook(method, XposedInterface.PRIORITY_DEFAULT, hooker));
+                handles.add(LSPosedBridge.hook(null, method).intercept(hooker));
             }
         }
-        return unhooks;
+        return handles;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static <T> XposedInterface.MethodUnhooker<Constructor<T>>
-    hookConstructor(Class<? extends XposedInterface.Hooker> hooker, Class<T> clazz, Class<?>... parameterTypes) {
+    public static <T> XposedInterface.HookHandle
+    hookConstructor(XposedInterface.Hooker hooker, Class<T> clazz, Class<?>... parameterTypes) {
         try {
             var constructor = clazz.getDeclaredConstructor(parameterTypes);
-            return LSPosedBridge.doHook(constructor, XposedInterface.PRIORITY_DEFAULT, hooker);
+            return LSPosedBridge.hook(null, constructor).intercept(hooker);
         } catch (NoSuchMethodException e) {
             throw new HookFailedError(e);
         }
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public static <T> XposedInterface.HookHandle
+    hookMethod(XposedInterface.Hooker hooker, Method method) {
+        return LSPosedBridge.hook(null, method).intercept(hooker);
     }
 }

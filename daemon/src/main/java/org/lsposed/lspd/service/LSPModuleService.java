@@ -44,6 +44,8 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.github.libxposed.service.HookedProcess;
+import io.github.libxposed.service.IHotReloadCallback;
 import io.github.libxposed.service.IXposedScopeCallback;
 import io.github.libxposed.service.IXposedService;
 
@@ -123,9 +125,9 @@ public class LSPModuleService extends IXposedService.Stub {
     }
 
     @Override
-    public int getAPIVersion() throws RemoteException {
+    public int getApiVersion() throws RemoteException {
         ensureModule();
-        return API;
+        return IXposedService.LIB_API;
     }
 
     @Override
@@ -147,9 +149,9 @@ public class LSPModuleService extends IXposedService.Stub {
     }
 
     @Override
-    public int getFrameworkPrivilege() throws RemoteException {
+    public long getFrameworkProperties() throws RemoteException {
         ensureModule();
-        return IXposedService.FRAMEWORK_PRIVILEGE_ROOT;
+        return IXposedService.PROP_CAP_SYSTEM | IXposedService.PROP_CAP_REMOTE;
     }
 
     @Override
@@ -165,26 +167,45 @@ public class LSPModuleService extends IXposedService.Stub {
     }
 
     @Override
-    public void requestScope(String packageName, IXposedScopeCallback callback) throws RemoteException {
+    public void requestScope(List<String> packages, IXposedScopeCallback callback) throws RemoteException {
         var userId = ensureModule();
-        if (ConfigManager.getInstance().scopeRequestBlocked(loadedModule.packageName)) {
-            callback.onScopeRequestDenied(packageName);
-        } else {
+        for (var packageName : packages) {
+            if (ConfigManager.getInstance().scopeRequestBlocked(loadedModule.packageName)) {
+                callback.onScopeRequestFailed("Scope request blocked for " + packageName);
+                return;
+            }
             LSPNotificationManager.requestModuleScope(loadedModule.packageName, userId, packageName, callback);
-            callback.onScopeRequestPrompted(packageName);
         }
     }
 
     @Override
-    public String removeScope(String packageName) throws RemoteException {
+    public void removeScope(List<String> packages) throws RemoteException {
         var userId = ensureModule();
-        try {
-            if (!ConfigManager.getInstance().removeModuleScope(loadedModule.packageName, packageName, userId)) {
-                return "Invalid request";
+        for (var packageName : packages) {
+            try {
+                if (!ConfigManager.getInstance().removeModuleScope(loadedModule.packageName, packageName, userId)) {
+                    Log.w(TAG, "removeScope: invalid request for " + packageName);
+                }
+            } catch (Throwable e) {
+                Log.w(TAG, "removeScope: " + packageName, e);
             }
-            return null;
+        }
+    }
+
+    @Override
+    public List<HookedProcess> getRunningTargets() throws RemoteException {
+        ensureModule();
+        // Target tracking for hot reload is not implemented yet
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void hotReloadModule(long targetId, Bundle data, IHotReloadCallback callback) throws RemoteException {
+        ensureModule();
+        try {
+            callback.onHotReloadResult(IXposedService.HOT_RELOAD_UNSUPPORTED, "Hot reload is not supported by this framework version");
         } catch (Throwable e) {
-            return e.getMessage();
+            Log.w(TAG, "hotReloadModule: ", e);
         }
     }
 
@@ -243,20 +264,15 @@ public class LSPModuleService extends IXposedService.Stub {
     }
 
     @Override
-    public ParcelFileDescriptor openRemoteFile(String path, int mode) throws RemoteException {
+    public ParcelFileDescriptor openRemoteFile(String path) throws RemoteException {
         var userId = ensureModule();
         ConfigFileManager.ensureModuleFilePath(path);
         try {
             var dir = ConfigFileManager.resolveModuleDir(loadedModule.packageName, FILES_DIR, userId, Binder.getCallingUid());
-            return ParcelFileDescriptor.open(dir.resolve(path).toFile(), mode);
+            return ParcelFileDescriptor.open(dir.resolve(path).toFile(), ParcelFileDescriptor.MODE_READ_ONLY);
         } catch (IOException e) {
             throw new RemoteException(e.getMessage());
         }
-    }
-
-    @Override
-    public Bundle featuredMethod(String name, Bundle args) {
-        return new Bundle();
     }
 
     @Override
