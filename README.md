@@ -6,9 +6,9 @@
 
 [![Release](https://img.shields.io/github/v/release/EzequielDevTeam/LSPosed-ET?style=for-the-badge&logo=git&label=Release)](https://github.com/EzequielDevTeam/LSPosed-ET/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/EzequielDevTeam/LSPosed-ET/core.yml?branch=master&style=for-the-badge&label=Build)](https://github.com/EzequielDevTeam/LSPosed-ET/actions/workflows/core.yml)
-[![Xposed API](https://img.shields.io/badge/Xposed_API-100-blue?style=for-the-badge)](https://github.com/libxposed/api)
+[![Xposed API](https://img.shields.io/badge/Xposed_API-102-blue?style=for-the-badge)](https://github.com/libxposed/api)
 [![Min Android](https://img.shields.io/badge/Android_8.1+-27+-34A853?style=for-the-badge&logo=android&logoColor=white)](#supported-versions)
-[![Target Android](https://img.shields.io/badge/Android_16_(API_36)-Supported-brightgreen?style=for-the-badge&logo=android&logoColor=white)](#supported-versions)
+[![Target Android](https://img.shields.io/badge/Android_17_(API_37)-Supported-brightgreen?style=for-the-badge&logo=android&logoColor=white)](#supported-versions)
 [![License](https://img.shields.io/badge/License-GPL--3.0-red?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Loader-Zygisk_|_Riru-black?style=for-the-badge&logo=magisk)](https://github.com/topjohnwu/Magisk)
 
@@ -18,7 +18,7 @@
 
 ## Introduction
 
-**LSPosed ET** is a maintained fork of [LSPosed](https://github.com/LSPosed/LSPosed) by the **EzequielDevTeam Technology**, focused on keeping the framework fully functional on the newest Android releases — including **Android 16 (API 36)**, which the upstream project no longer officially supports.
+**LSPosed ET** is a maintained fork of [LSPosed](https://github.com/LSPosed/LSPosed) by the **EzequielDevTeam Technology**, focused on keeping the framework fully functional on the newest Android releases — including **Android 17 (API 37)**, which the upstream project no longer officially supports.
 
 LSPosed itself is an evolution of the classic [Xposed Framework](https://github.com/rovo89/Xposed) by rovo89: a module system that allows small apps ("modules") to alter the behavior of the operating system and of other applications **without modifying any APK file**. Instead of decompiling and repacking apps, modules inject logic into running processes through method hooking at the ART virtual machine level.
 
@@ -45,7 +45,7 @@ Hooking itself is delegated to **[LSPlant](https://github.com/LSPosed/LSPlant)**
 | `zygisk_lsposed` / `riru_lsposed` | Magisk module: entry point injected during boot, hands off control to the daemon |
 | Daemon (`lspd`) | The brain: manages installed modules, scopes, per-app resource redirection, applies hooks, publishes the manager binder service |
 | `manager.apk` | User interface: lists modules, toggles them, configures scopes, shows framework status and logs |
-| Vendored libxposed **API 100** | Stable ABI consumed by modules, compiled against `io.github.libxposed:api:100` |
+| libxposed **API 102.0.0** | Stable ABI consumed by modules, compiled against `io.github.libxposed:api:102.0.0` |
 
 ---
 
@@ -67,7 +67,7 @@ Hooking itself is delegated to **[LSPlant](https://github.com/LSPosed/LSPlant)**
 | 8.1 – 13 (API 27 – 34) | ✅ Supported |
 | 14 – 15 (API 34 – 35) | ✅ Supported |
 | **16 (API 36)** | ✅ **Fully supported** (upgraded LSPlant v6.4 + `IUserManager.getUsers` fix for API 36) |
-| 17 (future) | ⏳ Planned — support will land once devices and custom ROMs have fully transitioned |
+| **17 (API 37)** | ✅ **Fully supported** (v2.0.0 — targetSdk 37 + libxposed API 102.0.0) |
 
 ---
 
@@ -88,10 +88,11 @@ Hooking itself is delegated to **[LSPlant](https://github.com/LSPosed/LSPlant)**
 | Area | This fork |
 |------|-----------|
 | Android 16 | Works out of the box (LSPlant v6.4, daemon fixes) |
+| Android 17 | Works out of the box (v2.0.0 — compileSdk/targetSdk 37, build-tools 37.0.0) |
 | Identity | `LSPosed ET` / EzequielDevTeam Technology |
 | Updater | Points to this repository's `update.json` |
 | CI | Self-hosted GitHub Actions pipeline producing signed artifacts |
-| libxposed API | Vendored `api:100` artifacts built reproducibly inside CI |
+| libxposed API | `api:102.0.0` + `interface:102.0.0` from Maven Central |
 
 ---
 

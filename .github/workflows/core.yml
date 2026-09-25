@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: libxposed/service
-          ref: "100"
+          ref: "102.0.0"
           path: libxposed/service
 
       - name: Setup Java
@@ -74,10 +74,9 @@ jobs:
           restore-keys: ${{ runner.os }}
           save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
-      - name: Install vendored libxposed API 100
+      - name: Install libxposed API 102.0.0 from Maven Central
         run: |
-          mkdir -p ~/.m2/repository/io/github/libxposed/api/100
-          cp ci/libxposed-api-100/api-100.aar ci/libxposed-api-100/api-100.pom ~/.m2/repository/io/github/libxposed/api/100/
+          echo "libxposed api:102.0.0 and interface:102.0.0 are resolved from Maven Central, no vendored AAR needed"
 
       - name: Build service dependency
         working-directory: libxposed/service
