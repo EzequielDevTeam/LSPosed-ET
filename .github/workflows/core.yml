@@ -54,6 +54,21 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Install Android 37 SDK packages
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager --install "build-tools;37.0.0" "ndk;27.0.12077973"
+          curl -sL --max-time 600 -o /tmp/cb.zip "https://dl.google.com/android/repository/platform-CinnamonBun_r02.zip"
+          rm -rf /tmp/cb "$ANDROID_HOME/platforms/android-37"
+          mkdir -p /tmp/cb && unzip -q /tmp/cb.zip -d /tmp/cb
+          mv /tmp/cb/android-37.1-beta2 "$ANDROID_HOME/platforms/android-37"
+          cp "$ANDROID_HOME/platforms/android-36/package.xml" "$ANDROID_HOME/platforms/android-37/package.xml"
+          sed -i 's#platforms;android-36#platforms;android-37#; s#<api-level>36</api-level>#<api-level>37</api-level>#' "$ANDROID_HOME/platforms/android-37/package.xml"
+          ls "$ANDROID_HOME/platforms/"
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
