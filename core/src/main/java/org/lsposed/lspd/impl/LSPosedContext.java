@@ -319,7 +319,7 @@ public class LSPosedContext implements XposedInterface {
                 var chain = new LSPosedBridge.ChainImpl(method, returnType, isStatic, thisObject, args,
                         filtered.toArray(), snapshots[1]);
                 return chain.proceedInternal(thisObject, args);
-            } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
+            } catch (InvocationTargetException | IllegalArgumentException e) {
                 throw e;
             } catch (Throwable t) {
                 throw new InvocationTargetException(t);
