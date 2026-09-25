@@ -67,7 +67,7 @@ Hooking itself is delegated to **[LSPlant](https://github.com/LSPosed/LSPlant)**
 | 8.1 – 13 (API 27 – 34) | ✅ Supported |
 | 14 – 15 (API 34 – 35) | ✅ Supported |
 | **16 (API 36)** | ✅ **Fully supported** (upgraded LSPlant v6.4 + `IUserManager.getUsers` fix for API 36) |
-| **17 (API 37)** | ✅ **Fully supported** (v2.0.0 — targetSdk 37 + libxposed API 102.0.0) |
+| **17 (API 37)** | ✅ **Targeted** (v2.0.0 — targetSdk 37 + libxposed API 102.0.0; compiled with platform 36 until Google publishes the android-37 platform) |
 
 ---
 
@@ -88,7 +88,7 @@ Hooking itself is delegated to **[LSPlant](https://github.com/LSPosed/LSPlant)**
 | Area | This fork |
 |------|-----------|
 | Android 16 | Works out of the box (LSPlant v6.4, daemon fixes) |
-| Android 17 | Works out of the box (v2.0.0 — compileSdk/targetSdk 37, build-tools 37.0.0) |
+| Android 17 | Targets API 37 (v2.0.0 — targetSdk 37; compileSdk 36 until Google releases the android-37 platform) |
 | Identity | `LSPosed ET` / EzequielDevTeam Technology |
 | Updater | Points to this repository's `update.json` |
 | CI | Self-hosted GitHub Actions pipeline producing signed artifacts |
