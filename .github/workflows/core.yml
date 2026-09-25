@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: libxposed/service
-          ref: "102.0.0"
+          ref: "102"
           path: libxposed/service
 
       - name: Setup Java
