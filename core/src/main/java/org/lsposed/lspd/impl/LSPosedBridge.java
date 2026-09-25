@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.robv.android.xposed.XposedBridge;
 import io.github.libxposed.api.XposedInterface;
-import io.github.libxposed.api.errors.HookFailedError;
+import io.github.libxposed.api.error.HookFailedError;
 
 public class LSPosedBridge {
 

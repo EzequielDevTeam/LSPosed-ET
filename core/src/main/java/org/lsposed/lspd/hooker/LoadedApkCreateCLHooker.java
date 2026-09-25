@@ -151,12 +151,6 @@ public class LoadedApkCreateCLHooker implements XposedInterface.Hooker {
                     }
                 }
 
-                @NonNull
-                @Override
-                public ClassLoader getClassLoader() {
-                    return classLoader;
-                }
-
                 @Override
                 public boolean isFirstPackage() {
                     return isFirstPackage;
